@@ -14,12 +14,12 @@
     hostName = "shane-node-0";
     networkmanager.enable = true;
 
-    interfaces.eth0.ipv4.addresses = [{
+    interfaces.enp5s0.ipv4.addresses = [{
       address = "10.0.0.2";
       prefixLength = 24;
     }];
 
-    firewall.trustedInterfaces = [ "eth0" ];
+    firewall.trustedInterfaces = [ "enp5s0" ];
     defaultGateway = "10.0.0.1";
     nameservers = [ "1.1.1.1" ];
   };
