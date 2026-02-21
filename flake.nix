@@ -6,9 +6,10 @@
     sops-nix.url = "github:Mic92/sops-nix";
   };
 
-  outputs = { self, nixpkgs, inputs, ... }: {
+  outputs = { self, nixpkgs, ... }  @ inputs: {
     nixosConfigurations.shane-server = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
+      specialArgs = { inherit inputs; };
       modules = [
         ./hosts/server.nix
         inputs.sops-nix.nixosModules.sops
@@ -16,6 +17,7 @@
     };
     nixosConfigurations.shane-node-0 = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
+      specialArgs = { inherit inputs; };
       modules = [
         ./hosts/node-0.nix
         inputs.sops-nix.nixosModules.sops
