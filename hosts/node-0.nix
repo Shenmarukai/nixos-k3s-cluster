@@ -4,18 +4,25 @@
     ../hardware/node-0-hardware.nix
   ];
 
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.grub = {
+    enable = true;
+    efiSupport = false;
+    device = "/dev/sda";
+  };
 
-  networking.hostName = "shane-node-0";
-  networking.networkmanager.enable = true;
-  networking.interfaces.eth0.ipv4.addresses = [{
-    address = "10.0.0.2";
-    prefixLength = 24;
-  }];
-  networking.firewall.trustedInterfaces = [ "eth0" ];
-  networking.defaultGateway = "10.0.0.1";
-  networking.nameservers = [ "1.1.1.1" ];
+  networking = {
+    hostName = "shane-node-0";
+    networkmanager.enable = true;
+
+    interfaces.eth0.ipv4.addresses = [{
+      address = "10.0.0.2";
+      prefixLength = 24;
+    }];
+
+    firewall.trustedInterfaces = [ "eth0" ];
+    defaultGateway = "10.0.0.1";
+    nameservers = [ "1.1.1.1" ];
+  };
 
   time.timeZone = "America/New_York";
 
@@ -62,6 +69,5 @@
   };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
   system.stateVersion = "25.11";
 }
