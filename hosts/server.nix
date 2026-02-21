@@ -95,6 +95,7 @@
     enable = true;
     nssmdns4 = true;
     openFirewall = true;
+    allowInterfaces = [ "eth-home" ];
     publish = {
       enable = true;
       addresses = true;
