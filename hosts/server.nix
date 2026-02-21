@@ -36,7 +36,10 @@
       }];
     };
 
-    firewall.trustedInterfaces = [ "eth-direct" ];
+    firewall = {
+      trustedInterfaces = [ "eth-direct" ];
+      allowedUDPPorts = [ 5353 ];
+    };
 
     nat = {
       enable = true;
@@ -77,7 +80,7 @@
     enable = true;
     role = "server";
     tokenFile = config.sops.secrets.k3s_token.path;
-    extraFlags = "--node-ip=10.0.0.1 --bind-address=10.0.0.1 --advertise-address=10.0.0.1 --flannel-iface=eth-direct";
+    extraFlags = "--node-ip=10.0.0.1 --bind-address=10.0.0.1 --advertise-address=10.0.0.1 --flannel-iface=eth-direct --tls-san=shane-server.local";
   };
 
   services.openssh = {
@@ -85,6 +88,17 @@
     settings = {
       PasswordAuthentication = false;
       PermitRootLogin = "no";
+    };
+  };
+
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
+    publish = {
+      enable = true;
+      addresses = true;
+      userServices = true;
     };
   };
 
