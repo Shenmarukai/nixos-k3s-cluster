@@ -12,25 +12,36 @@
     kernel.sysctl."net.ipv4.ip_forward" = 1;
   };
 
+  systemd.network.links = {
+    "10-onboard-lan" = {
+      matchConfig.MACAddress = "70:85:c2:6c:26:dd";
+      linkConfig.Name = "eth-home";
+    };
+    "10-usb-adapter" = {
+      matchConfig.MACAddress = "50:3e:aa:8b:4a:37";
+      linkConfig.Name = "eth-direct";
+    };
+  };
+
   networking = {
     hostName = "shane-server";
     networkmanager.enable = true;
     useDHCP = false;
 
     interfaces = {
-      eth0.useDHCP = true;
-      eth1.ipv4.addresses = [{
+      eth-home.useDHCP = true;
+      eth-direct.ipv4.addresses = [{
         address = "10.0.0.1";
         prefixLength = 24;
       }];
     };
 
-    firewall.trustedInterfaces = [ "eth1" ];
+    firewall.trustedInterfaces = [ "eth-direct" ];
 
     nat = {
       enable = true;
-      internalInterfaces = [ "eth1" ];
-      externalInterface = "eth0";
+      internalInterfaces = [ "eth-direct" ];
+      externalInterface = "eth-home";
     };
   };
 
@@ -66,7 +77,7 @@
     enable = true;
     role = "server";
     tokenFile = config.sops.secrets.k3s_token.path;
-    extraFlags = "--node-ip=10.0.0.1 --bind-address=10.0.0.1 --advertise-address=10.0.0.1 --flannel-iface=eth1";
+    extraFlags = "--node-ip=10.0.0.1 --bind-address=10.0.0.1 --advertise-address=10.0.0.1 --flannel-iface=eth-direct";
   };
 
   services.openssh = {

@@ -10,16 +10,23 @@
     device = "/dev/sda";
   };
 
+  systemd.network.links = {
+    "10-onboard-lan" = {
+      matchConfig.MACAddress = "00:25:64:d6:d6:68";
+      linkConfig.Name = "eth-direct";
+    };
+  };
+
   networking = {
     hostName = "shane-node-0";
     networkmanager.enable = true;
 
-    interfaces.enp5s0.ipv4.addresses = [{
+    interfaces.eth-direct.ipv4.addresses = [{
       address = "10.0.0.2";
       prefixLength = 24;
     }];
 
-    firewall.trustedInterfaces = [ "enp5s0" ];
+    firewall.trustedInterfaces = [ "eth-direct" ];
     defaultGateway = "10.0.0.1";
     nameservers = [ "1.1.1.1" ];
   };
@@ -57,7 +64,7 @@
     role = "agent";
     serverAddr = "https://10.0.0.1:6443";
     tokenFile = config.sops.secrets.k3s_token.path;
-    extraFlags = "--node-ip=10.0.0.2 --flannel-iface=eth0";
+    extraFlags = "--node-ip=10.0.0.2 --flannel-iface=eth-direct";
   };
 
   services.openssh = {
