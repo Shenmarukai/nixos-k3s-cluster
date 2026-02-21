@@ -37,7 +37,7 @@
   ];
 
   sops = {
-    defaultSopsFile = ../secrets/cluster-secrets.yaml;
+    defaultSopsFile = ../.secrets/cluster-secrets.yaml;
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
     secrets.k3s_token = {
