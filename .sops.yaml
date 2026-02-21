@@ -1,0 +1,10 @@
+# .sops.yaml
+keys:
+  - &shane-desktop age1l5uztwj56yemlc9f2q3jwmmecwuqfc90cv54gxpfhf33747kcgys83ya8t
+  - &shane-server age1cn5qdqry6m8y3lgqnn0fz62zjmqg6832vwwvlh0qls7kler0gq2see4ffr
+  - &shane-node-0 age1zxcwlztqnlqeanxzdshrptywy6r47f2s2kh83ege6rvx44y5hfnq3nnwh0
+
+creation_rules:
+  - path_regex: .secrets/cluster-secrets.yaml$
+    key_groups:
+      - age: [ *shane-desktop, *shane-server, *shane-node-0 ]
