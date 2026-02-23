@@ -20,15 +20,15 @@
           spec.containers = [{
             name = "minecraft";
             image = "itzg/minecraft-server:latest";
-            env = [
-              { name = "EULA"; value = "TRUE"; }
-              { name = "TYPE"; value = "PAPER"; }
-              { name = "MEMORY"; value = "4G"; }
-            ];
-            ports = [{ containerPort = 25565; name = "mc-port"; }];
-            volumeMounts = [{ name = "data"; mountPath = "/data"; }];
+            volumeMounts = [{
+              name = "minecraft-storage"; # Changed for clarity
+              mountPath = "/data";
+            }];
           }];
-          volumes = [{ name = "data"; persistentVolumeClaim.claimName = "minecraft-pvc"; }];
+          volumes = [{
+            name = "minecraft-storage"; # This MUST match the name above
+            persistentVolumeClaim.claimName = "minecraft-pvc";
+          }];
         };
       };
     }
