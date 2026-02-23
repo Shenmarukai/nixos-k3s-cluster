@@ -17,20 +17,27 @@
         selector.matchLabels.app = "minecraft";
         template = {
           metadata.labels.app = "minecraft";
-          spec.containers = [{
-            name = "minecraft";
-            image = "itzg/minecraft-server:latest";
-            volumeMounts = [{
-              name = "mc-data";
-              mountPath = "/data";
+          spec = {  # <--- This starts the Pod Spec
+            containers = [{
+              name = "minecraft";
+              image = "itzg/minecraft-server:latest";
+              env = [
+                { name = "EULA"; value = "TRUE"; }
+                { name = "TYPE"; value = "PAPER"; }
+                { name = "MEMORY"; value = "4G"; }
+              ];
+              volumeMounts = [{
+                name = "mc-data";
+                mountPath = "/data";
+              }];
             }];
-          }];
-          volumes = [{
-            name = "mc-data";
-            persistentVolumeClaim.claimName = "minecraft-pvc";
-          }];
+            volumes = [{
+              name = "mc-data";
+              persistentVolumeClaim.claimName = "minecraft-pvc";
+            }];
+          };
         };
-      };
+      } ;
     }
     {
       apiVersion = "v1";
