@@ -26,7 +26,7 @@
             }];
           }];
           volumes = [{
-            name = "minecraft-storage";
+            name = "mc-data";
             persistentVolumeClaim.claimName = "minecraft-pvc";
           }];
         };
