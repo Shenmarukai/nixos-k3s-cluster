@@ -21,12 +21,12 @@
             name = "minecraft";
             image = "itzg/minecraft-server:latest";
             volumeMounts = [{
-              name = "minecraft-storage"; # Changed for clarity
+              name = "mc-data";
               mountPath = "/data";
             }];
           }];
           volumes = [{
-            name = "minecraft-storage"; # This MUST match the name above
+            name = "minecraft-storage";
             persistentVolumeClaim.claimName = "minecraft-pvc";
           }];
         };
