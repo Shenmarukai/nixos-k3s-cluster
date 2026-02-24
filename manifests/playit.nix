@@ -4,7 +4,7 @@
     apiVersion = "v1";
     kind = "Secret";
     metadata.name = "playit-secret";
-    stringData.SECRET_KEY = config.sops.placeholder.playit_secret;
+    stringData.SECRET_KEY = config.sops.secrets.playit_secret;
   }
   {
     apiVersion = "apps/v1";
