@@ -81,8 +81,11 @@
 
     age.keyFile = "home/kubernetes/.config/sops/age/keys.txt";
 
-    secrets.k3s_token = {
-      path = "/var/lib/k3s-token";
+    secrets = {
+      k3s_token = {
+        path = "/var/lib/k3s-token";
+      };
+      playit_secret = {};
     };
   };
 
