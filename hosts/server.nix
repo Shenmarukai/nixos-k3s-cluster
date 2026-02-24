@@ -77,7 +77,9 @@
 
   sops = {
     defaultSopsFile = ../.secrets/secrets.yaml;
-    age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+    defaultSopsFormat = "yaml";
+
+    age.keyFile = "home/kubernetes/.config/sops/age/keys.txt";
 
     secrets.k3s_token = {
       path = "/var/lib/k3s-token";
