@@ -116,7 +116,7 @@
     tokenFile = config.sops.secrets.k3s_token.path;
     extraFlags = "--node-ip=10.0.0.1 --bind-address=0.0.0.0 --advertise-address=10.0.0.1 --flannel-iface=eth-direct --tls-san=shane-server.local --tls-san=shane-server";
     manifests = {
-      playit    = { content = import ../manifests/playit.nix { inherit config; }; };
+      playit    = { content = import ../manifests/playit.nix { inherit config lib; }; };
       minecraft = { content = import ../manifests/minecraft.nix; };
     };
   };

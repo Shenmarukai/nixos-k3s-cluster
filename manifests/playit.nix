@@ -1,10 +1,10 @@
-{ config }:
+{ config, lib }:
 [
   {
     apiVersion = "v1";
     kind = "Secret";
     metadata.name = "playit-secret";
-    stringData.SECRET_KEY = config.sops.secrets.playit_secret.path;
+    stringData.SECRET_KEY = lib.removeSuffix "\n" (builtins.readFile config.sops.secrets.playit_secret.path);
   }
   {
     apiVersion = "apps/v1";
