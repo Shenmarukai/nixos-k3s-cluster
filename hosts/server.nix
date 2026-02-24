@@ -17,9 +17,13 @@
       matchConfig.MACAddress = "70:85:c2:6c:26:dd";
       linkConfig.Name = "eth-home";
     };
-    "10-usb-adapter" = {
-      matchConfig.MACAddress = "50:3e:aa:8b:4a:37";
+    "10-usb-adapter-0" = {
+      matchConfig.MACAddress = "a0:ce:c8:5c:cb:9f";
       linkConfig.Name = "eth-direct";
+    };
+    "10-usb-adapter-1" = {
+      matchConfig.MACAddress = "50:3e:aa:8b:4a:37";
+      linkConfig.Name = "eth-ptzo";
     };
   };
 
@@ -72,7 +76,7 @@
   ];
 
   sops = {
-    defaultSopsFile = ../.secrets/cluster-secrets.yaml;
+    defaultSopsFile = ../.secrets/secrets.yaml;
     age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
     secrets.k3s_token = {
@@ -107,6 +111,7 @@
     tokenFile = config.sops.secrets.k3s_token.path;
     extraFlags = "--node-ip=10.0.0.1 --bind-address=0.0.0.0 --advertise-address=10.0.0.1 --flannel-iface=eth-direct --tls-san=shane-server.local --tls-san=shane-server";
     manifests = {
+      #playit    = { content = import ../manifests/playit.nix; };
       minecraft = { content = import ../manifests/minecraft.nix; };
     };
   };

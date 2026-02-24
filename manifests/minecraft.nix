@@ -17,7 +17,7 @@
         selector.matchLabels.app = "minecraft";
         template = {
           metadata.labels.app = "minecraft";
-          spec = {  # <--- This starts the Pod Spec
+          spec = {
             containers = [{
               name = "minecraft";
               image = "itzg/minecraft-server:latest";
@@ -44,7 +44,7 @@
       kind = "Service";
       metadata.name = "minecraft-lb";
       spec = {
-        type = "LoadBalancer"; # K3s ServiceLB will bind this to your host's IP
+        type = "LoadBalancer";
         selector.app = "minecraft";
         ports = [{ port = 25565; targetPort = 25565; }];
       };
