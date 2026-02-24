@@ -58,6 +58,8 @@
 
     secrets.k3s_token = {
       path = "/var/lib/k3s-token";
+      owner = "root";
+      mode = "0400";
     };
   };
 
