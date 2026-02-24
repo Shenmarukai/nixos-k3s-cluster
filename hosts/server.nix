@@ -12,18 +12,37 @@
     kernel.sysctl."net.ipv4.ip_forward" = 1;
   };
 
-  systemd.network.links = {
-    "10-onboard-lan" = {
-      matchConfig.MACAddress = "70:85:c2:6c:26:dd";
-      linkConfig.Name = "eth-home";
+  systemd = {
+    network.links = {
+      "10-onboard-lan" = {
+        matchConfig.MACAddress = "70:85:c2:6c:26:dd";
+        linkConfig.Name = "eth-home";
+      };
+      "10-usb-adapter-0" = {
+        matchConfig.MACAddress = "a0:ce:c8:5c:cb:9f";
+        linkConfig.Name = "eth-direct";
+      };
+      "10-usb-adapter-1" = {
+        matchConfig.MACAddress = "50:3e:aa:8b:4a:37";
+        linkConfig.Name = "eth-ptzo";
+      };
     };
-    "10-usb-adapter-0" = {
-      matchConfig.MACAddress = "a0:ce:c8:5c:cb:9f";
-      linkConfig.Name = "eth-direct";
-    };
-    "10-usb-adapter-1" = {
-      matchConfig.MACAddress = "50:3e:aa:8b:4a:37";
-      linkConfig.Name = "eth-ptzo";
+
+    services.k3s-secret-sync = {
+      description = "Sync sops playit_secret to kubernetes";
+      after = [ "sops-nix.service" "k3s.service" ];
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = ''
+          ${pkgs.k3s}/bin/kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml \
+            create secret generic playit-secret \
+            --namespace default \
+            --from-literal=SECRET_KEY=$(${pkgs.coreutils}/bin/cat ${config.sops.secrets.playit_secret.path} | ${pkgs.gnused}/bin/sed 's/[[:space:]]//g') \
+            --dry-run=client -o yaml | ${pkgs.k3s}/bin/kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml apply -f -
+        '';
+        RemainAfterExit = true;
+      };
     };
   };
 
@@ -89,40 +108,42 @@
       };
       playit_secret = {
         owner = "root";
-        mode = "0444";
+        mode = "0400";
       };
     };
   };
 
-  services.openssh = {
-    enable = true;
-    settings = {
-      PasswordAuthentication = false;
-      PermitRootLogin = "no";
-    };
-  };
-
-  services.avahi = {
-    enable = true;
-    nssmdns4 = true;
-    openFirewall = true;
-    allowInterfaces = [ "eth-home" ];
-    publish = {
+  services = {
+    openssh = {
       enable = true;
-      addresses = true;
-      workstation = true;
-      userServices = true;
+      settings = {
+        PasswordAuthentication = false;
+        PermitRootLogin = "no";
+      };
     };
-  };
 
-  services.k3s = {
-    enable = true;
-    role = "server";
-    tokenFile = config.sops.secrets.k3s_token.path;
-    extraFlags = "--node-ip=10.0.0.1 --bind-address=0.0.0.0 --advertise-address=10.0.0.1 --flannel-iface=eth-direct --tls-san=shane-server.local --tls-san=shane-server";
-    manifests = {
-      playit    = { content = import ../manifests/playit.nix; };
-      minecraft = { content = import ../manifests/minecraft.nix; };
+    avahi = {
+      enable = true;
+      nssmdns4 = true;
+      openFirewall = true;
+      allowInterfaces = [ "eth-home" ];
+      publish = {
+        enable = true;
+        addresses = true;
+        workstation = true;
+        userServices = true;
+      };
+    };
+
+    k3s = {
+      enable = true;
+      role = "server";
+      tokenFile = config.sops.secrets.k3s_token.path;
+      extraFlags = "--node-ip=10.0.0.1 --bind-address=0.0.0.0 --advertise-address=10.0.0.1 --flannel-iface=eth-direct --tls-san=shane-server.local --tls-san=shane-server";
+      manifests = {
+        playit    = { content = import ../manifests/playit.nix; };
+        minecraft = { content = import ../manifests/minecraft.nix; };
+      };
     };
   };
 
