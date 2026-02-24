@@ -20,13 +20,12 @@
 
             command = [ "sh" "-c" ];
             args = [
-              "export SECRET_KEY=$(cat /etc/playit/secret_key | tr -d '\\n\\r '); exec /usr/local/bin/playit-agent"
+              "export SECRET_KEY=$(cat /run/secrets/playit_secret | tr -d '\\n\\r '); playit-agent"
             ];
 
             volumeMounts = [{
               name = "sops-volume";
-              mountPath = "/etc/playit/secret_key";
-              subPath = "playit_secret";
+              mountPath = "/run/secrets/playit_secret";
               readOnly = true;
             }];
           }];
@@ -35,8 +34,8 @@
             name = "sops-volume";
 
             hostPath = {
-              path = "/run/secrets";
-              type = "Directory";
+              path = "/run/secrets/playit_secret";
+              type = "File";
             };
           }];
         };
