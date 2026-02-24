@@ -34,12 +34,13 @@
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
         Type = "oneshot";
+        # We must wrap this in bash so pipes (|) and subshells ($()) work
         ExecStart = ''
-          ${pkgs.k3s}/bin/kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml \
+          ${pkgs.bash}/bin/bash -c "${pkgs.k3s}/bin/kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml \
             create secret generic playit-secret \
             --namespace default \
             --from-literal=SECRET_KEY=$(${pkgs.coreutils}/bin/cat ${config.sops.secrets.playit_secret.path} | ${pkgs.gnused}/bin/sed 's/[[:space:]]//g') \
-            --dry-run=client -o yaml | ${pkgs.k3s}/bin/kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml apply -f -
+            --dry-run=client -o yaml | ${pkgs.k3s}/bin/kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml apply -f -"
         '';
         RemainAfterExit = true;
       };
