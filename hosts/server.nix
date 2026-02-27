@@ -34,7 +34,6 @@
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
         Type = "oneshot";
-        # We must wrap this in bash so pipes (|) and subshells ($()) work
         ExecStart = ''
           ${pkgs.bash}/bin/bash -c "${pkgs.k3s}/bin/kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml \
             create secret generic playit-secret \
@@ -56,6 +55,10 @@
       eth-home.useDHCP = true;
       eth-direct.ipv4.addresses = [{
         address = "10.0.0.1";
+        prefixLength = 24;
+      }];
+      eth-ptzo.ipv4.addresses = [{
+        address = "192.168.100.100";
         prefixLength = 24;
       }];
     };
