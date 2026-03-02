@@ -1,4 +1,5 @@
-[
+{
+  content = [
     {
       apiVersion = "v1";
       kind = "PersistentVolumeClaim";
@@ -49,4 +50,5 @@
         ports = [{ port = 25565; targetPort = 25565; }];
       };
     }
-]
+  ];
+}

@@ -1,84 +1,25 @@
-{ config, lib, pkgs, ... }:
+{ ... }:
 {
   imports = [
     ../hardware/node-0-hardware.nix
+
+    ../modules/core/nix.nix
+    ../modules/core/time.nix
+
+    ../modules/users/kubernetes.nix
+
+    ../modules/services/openssh.nix
+
+    ../modules/packages/git.nix
+    ../modules/packages/vim.nix
+    ../modules/packages/wget.nix
+
+    node-0/core/boot.nix
+
+    node-0/network/networking.nix
+
+    node-0/security/secrets.nix
+
+    node-0/services/k3s.nix
   ];
-
-  boot.loader.grub = {
-    enable = true;
-    efiSupport = false;
-    device = "/dev/sda";
-  };
-
-  systemd.network.links = {
-    "10-onboard-lan" = {
-      matchConfig.MACAddress = "00:25:64:d6:d6:68";
-      linkConfig.Name = "eth-direct";
-    };
-  };
-
-  networking = {
-    hostName = "shane-node-0";
-    networkmanager.enable = true;
-
-    interfaces.eth-direct.ipv4.addresses = [{
-      address = "10.0.0.2";
-      prefixLength = 24;
-    }];
-
-    firewall.trustedInterfaces = [ "eth-direct" ];
-    defaultGateway = "10.0.0.1";
-    nameservers = [ "1.1.1.1" ];
-  };
-
-  time.timeZone = "America/New_York";
-
-  users.users.kubernetes = {
-    isNormalUser = true;
-    extraGroups = [ "wheel" ];
-    packages = with pkgs; [
-      tree
-    ];
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKcqdl2uc402XNn5UMuJIShs74HKiucbwMRpNQT90jJO shane-desktop"
-    ];
-  };
-
-  environment.systemPackages = with pkgs; [
-    git
-    vim
-    wget
-  ];
-
-  sops = {
-    defaultSopsFile = ../.secrets/secrets.yaml;
-    defaultSopsFormat = "yaml";
-
-    age.keyFile = "home/kubernetes/.config/sops/age/keys.txt";
-
-    secrets.k3s_token = {
-      path = "/var/lib/k3s-token";
-      owner = "root";
-      mode = "0400";
-    };
-  };
-
-  services.openssh = {
-    enable = true;
-    settings = {
-      PasswordAuthentication = false;
-      PermitRootLogin = "no";
-    };
-  };
-
-  services.k3s = {
-    enable = true;
-    role = "agent";
-    serverAddr = "https://10.0.0.1:6443";
-    tokenFile = config.sops.secrets.k3s_token.path;
-    extraFlags = "--node-ip=10.0.0.2 --flannel-iface=eth-direct";
-  };
-
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  system.stateVersion = "25.11";
 }
