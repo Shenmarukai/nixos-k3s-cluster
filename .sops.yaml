@@ -1,6 +1,7 @@
 # .sops.yaml
 keys:
   - &shane-desktop age1hvlj697lv72dfn9uvmh2zxjmtfdfu7whk7dnr3urmf9wctvc8ulsrwqyns
+  - &shane-laptop age1028jznx0s4ag2u6fcya3glutx6l9nc7mehqklzl0tmwzdzr2cgrqurpdr2
   - &shane-server age1s8l65khm6xqaha336z4hjdnzd0hjm0uhvglshglm0eukrgw3c3hq0r9vlj
   - &shane-node-0 age12jn8unrykdreq325uw2e5exy80l4knmgg9cwznv6p6x9vjfhz4xqak050g
 
